@@ -84,9 +84,14 @@ The Dungeon Master Discord Bot is designed to facilitate and manage Dungeons & D
     ```
     /Roll 20
     ```
-- **Beginning a Campaign**:
+- **Saving a Campaign**:
     ```
-    /BeginCampaign
+    /SaveCampaign Cthulu's Rising
+    ```
+    
+- **Performing Actions**:
+    ```
+    ~I attempt a sneak attack on the guards
     ```
 
 ## Development
