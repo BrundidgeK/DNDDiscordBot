@@ -17,7 +17,7 @@ The Dungeon Master Discord Bot is designed to facilitate and manage Dungeons & D
 - **/LoadCampaign**: Loads a previously saved campaign (make sure to save your current one first)
 - **/SavedCampaigns**: Provides a list of all campaigns that have been saved
 - **/Recap**: Provides a recap for the current campaign
-- **~_**: Allows players to input actions they will perform in the game.
+- **~**: Allows players to input actions they will perform in the game.
 
 ## Prerequisites
 
