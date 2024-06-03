@@ -3,8 +3,8 @@ from random import randint
 
 
 class Responses:
-
     def __init__(self, api_key: str):
+        self.campaigns = None
         openai.api_key = api_key
         self.conversation_history = [
             {"role": "system", "content": "You are a discord bot acting as a dungeon and dragons dungeon master. "
@@ -29,7 +29,11 @@ class Responses:
                     "(ex: /CampaignStory The Lost Mines of Phandelver) \n\n"
                     "/BeginCampaign: Will start the campaign \n\n"
                     "/RewriteStory: allows you to rewrite a story event that occurred \n\n"
-                    "/stopstory: Ends the current campaign (this action cannot be undone) \n\n"
+                    "/StopStory: Ends the current campaign (this action cannot be undone) \n\n"
+                    "/SaveCampaign: Saves the current progress on the campaign\n\n"
+                    "/LoadCampaign: Loads a previously saved campaign (make sure to save your current one first)\n\n"
+                    "/SavedCampaigns: Provides a list of all campaigns that have been saved \n\n"
+                    "/Recap: Provides a recap for the current campaign"
                     "~_: allows players to input what action they will preform in the game "
                     "(ex: ~I will use my charisma to charm the dragon)")
         elif '/roll' in lowered:
@@ -82,6 +86,38 @@ class Responses:
                 return f'Campaign story set to: {story}'
             else:
                 return 'Please provide the campaign story after /campaignstory'
+        elif '/savecampaign' in lowered:
+            title = lowered.replace('/campaignstory', "").strip()
+            if title:
+                self.campaigns[title] = self.conversation_history
+                return f'Campaign story saved as {title}'
+            else:
+                return 'Please provide the campaign save title after /savecampaign'
+        elif '/loadcampaign' in lowered:
+            title = lowered.replace('/loadcampaign', "").strip()
+            if title:
+                try:
+                    self.conversation_history = self.campaigns[title]
+                    return f'{title} has been loaded'
+                except Exception as e:
+                    return 'Provide the title of an existing campaign'
+            else:
+                return 'Please provide the campaign save title after /loadcampaign'
+        elif '/savedcampaigns' in lowered:
+            return str(*self.campaigns.keys())
+        elif '/recap' in lowered:
+            self.conversation_history.append({"role": "user", "content": f'Players need a recap of all the '
+                                                                         f'campaign\'s events'})
+            try:
+                response = openai.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=self.conversation_history
+                )
+                assistant_response = response.choices[0].message.content
+                self.conversation_history.append({"role": "assistant", "content": assistant_response})
+                return assistant_response
+            except Exception as e:
+                return f"Error: {str(e)}"
         elif '~' in lowered:
             self.conversation_history.append({"role": "user", "content": f'{author} wrote "{user_input}"'})
             try:
